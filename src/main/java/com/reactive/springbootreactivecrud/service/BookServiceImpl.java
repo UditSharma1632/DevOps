@@ -6,7 +6,6 @@ import com.reactive.springbootreactivecrud.model.Book;
 import com.reactive.springbootreactivecrud.repository.BookRepo;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,19 +16,29 @@ import reactor.core.publisher.Mono;
 @AllArgsConstructor
 public class BookServiceImpl implements BookService{
     BookRepo bookRepo;
-
     ModelMapper modelMapper;
+
+    private Mono<Boolean> checkForExistingBook(BookDTO bookDTO) {
+        Book book = modelMapper.map(bookDTO, Book.class);
+        return bookRepo.findByNameAndAuthorAndPublishDate(book.getName(),
+                        book.getAuthor(), book.getPublishDate())
+                .map(existingBook -> false) // Book already exists
+                .defaultIfEmpty(true); // Book doesn't exist
+    }
 
     @Override
     public Mono<BookDTO> saveBook(BookDTO bookDTO) {
-        Book book = modelMapper.map(bookDTO, Book.class);
-        return bookRepo.findByNameAndAuthorAndPublishDate(book.getName(), book.getAuthor(), book.getPublishDate()).
-                flatMap(book1 -> {
-                    return Mono.error(new CustomException(("Book is already there"), HttpStatus.BAD_REQUEST.value()));
-                })
-                .switchIfEmpty(bookRepo.save(book)).map(book1 -> modelMapper.map(book1, BookDTO.class));
-//        Mono<Book> savedBook = bookRepo.save(book);
-//        return savedBook.map(book1 -> modelMapper.map(book1, BookDTO.class));
+        return checkForExistingBook(bookDTO)
+                .flatMap(result -> {
+                    if (result) {
+                        Book book = modelMapper.map(bookDTO, Book.class);
+                        return bookRepo.save(book)
+                                .map(savedBook -> modelMapper.map(savedBook, BookDTO.class));
+                    } else {
+                        return Mono.error(new CustomException("Book is already there",
+                                HttpStatus.BAD_REQUEST));
+                    }
+                });
     }
 
     @Override
@@ -47,31 +56,30 @@ public class BookServiceImpl implements BookService{
     @Override
     public Mono<BookDTO> updateBook(BookDTO bookDTO, String id) {
         return bookRepo.findById(id)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found")))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Book does not exist")))
                 .flatMap(existingBook -> {
-                    if (isUpdateNeeded(existingBook, bookDTO)) {
-                        updateBookDetails(existingBook, bookDTO);
-                        return bookRepo.save(existingBook)
-                                .map(updatedBook -> modelMapper.map(updatedBook, BookDTO.class));
-                    } else {
-                        return Mono.just(modelMapper.map(existingBook, BookDTO.class));
-                    }
+                    return checkForExistingBook(bookDTO)
+                            .flatMap(detailsExist -> {
+                                if (detailsExist) {
+                                    updateBookDetails(existingBook, bookDTO);
+                                    return bookRepo.save(existingBook)
+                                            .map(updatedBook -> modelMapper.map(updatedBook, BookDTO.class));
+                                } else {
+                                    return Mono.error(new CustomException
+                                            (("Book details already exist for another book")
+                                                    , HttpStatus.BAD_REQUEST));
+                                }
+                            });
                 });
     }
 
-    private boolean isUpdateNeeded(Book existingBook, BookDTO updatedBookDTO) {
-        return !existingBook.getName().equals(updatedBookDTO.getName())
-                || !existingBook.getAuthor().equals(updatedBookDTO.getAuthor())
-                || !existingBook.getPublishDate().equals(updatedBookDTO.getPublishDate());
+
+
+    private void updateBookDetails(Book book, BookDTO bookDTO){
+        book.setName(bookDTO.getName());
+        book.setAuthor(bookDTO.getAuthor());
+        book.setPublishDate(bookDTO.getPublishDate());
     }
-
-    private void updateBookDetails(Book existingBook, BookDTO updatedBookDTO) {
-        existingBook.setName(updatedBookDTO.getName());
-        existingBook.setAuthor(updatedBookDTO.getAuthor());
-        existingBook.setPublishDate(updatedBookDTO.getPublishDate());
-    }
-
-
 
 
     @Override
@@ -86,9 +94,4 @@ public class BookServiceImpl implements BookService{
                     }
                 });
     }
-
-
-
-
-
 }

@@ -1,6 +1,5 @@
 package com.reactive.springbootreactivecrud.controller;
 
-import com.reactive.springbootreactivecrud.Exception.CustomException;
 import com.reactive.springbootreactivecrud.dto.BookDTO;
 import com.reactive.springbootreactivecrud.service.BookService;
 import jakarta.validation.Valid;
@@ -19,14 +18,11 @@ import reactor.core.publisher.Mono;
 @Validated
 public class BookController {
     BookService bookService;
-    @PostMapping("add")
+    @PostMapping("/add")
     public Mono<ResponseEntity<BookDTO>> saveBook(@Valid @RequestBody BookDTO bookDTO) {
         return bookService.saveBook(bookDTO)
-                .flatMap(savedBook -> Mono.just(ResponseEntity.ok(savedBook)))
-                .onErrorResume(CustomException.class, exception ->
-                        Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                .body(new BookDTO("Error")))
-                );
+                .map(savedBookDTO -> ResponseEntity.status(HttpStatus.CREATED).body(savedBookDTO))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.CONFLICT, "Already Exists")));
     }
 
 
@@ -44,20 +40,12 @@ public class BookController {
                 , "No books for this author")));
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/updateBook/{id}")
     public Mono<ResponseEntity<BookDTO>> updateBook(@Valid @RequestBody BookDTO bookDTO, @PathVariable String id) {
         return bookService.updateBook(bookDTO, id)
-                .map(updatedBookDTO -> ResponseEntity.ok(updatedBookDTO))
-                .defaultIfEmpty(ResponseEntity.notFound().build())
-                .onErrorResume(ResponseStatusException.class, e -> {
-                    if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                        return Mono.just(ResponseEntity.notFound().build());
-                    }
-                    return Mono.just(ResponseEntity.status(e.getStatusCode()).build());
-                });
+                .map(savedBookDTO -> ResponseEntity.status(HttpStatus.CREATED).body(savedBookDTO))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not Saved")));
     }
-
-
 
     @DeleteMapping("/delete/{id}")
     public Mono<ResponseEntity<String>> deleteBook(@PathVariable String id) {

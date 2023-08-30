@@ -11,4 +11,6 @@ public interface BookRepo extends ReactiveCrudRepository<Book, String> {
     Mono<Book> findByAuthor(String author);
     Mono<Book> findByNameAndAuthorAndPublishDate(String name, String Author, String publishDate);
     Mono<Book> findById(String id);
+    Mono<Boolean> existsByNameAndIdNot(String name, String id);
 }
+

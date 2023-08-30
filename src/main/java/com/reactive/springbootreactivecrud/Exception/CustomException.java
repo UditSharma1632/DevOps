@@ -5,7 +5,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
 public class CustomException extends RuntimeException{
-    public CustomException(String message, int value) {
+   private HttpStatus status;
+
+    public CustomException(String message, HttpStatus status) {
         super(message);
+        this.status = status;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
     }
 }
