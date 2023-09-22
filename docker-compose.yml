@@ -9,13 +9,10 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - network
+      - myNetwork
     volumes:
       - app-data:/app/data
 
-networks:
-  network:
-    driver: bridge
-
 volumes:
   app-data:
+
