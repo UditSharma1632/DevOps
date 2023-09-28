@@ -46,11 +46,8 @@ pipeline{
         }
 
         stage('Sonar Analysis') {
-            environment {
-                scannerHome = tool 'SonarCloud'
-            }
             steps {
-               withSonarQubeEnv('sonar') {
+               withSonarQubeEnv('SonarCloud') {
                    sh '''${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD \
                    -Dsonar.projectName=SpringBootReactiveCRUD \
                    -Dsonar.sources=src/ \
