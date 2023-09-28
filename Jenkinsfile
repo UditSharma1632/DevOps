@@ -45,41 +45,41 @@ pipeline{
             }
         }
 
-        // stage('Sonar Analysis') {
-        //     steps {
-        //        withSonarQubeEnv('SonarCloud') {
-        //            sh '''${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD \
-        //            -Dsonar.projectName=SpringBootReactiveCRUD \
-        //            -Dsonar.sources=src/ \
-        //            -Dsonar.java.binaries=target/classes/com/reactive/springbootreactivecrud/ \
-        //            -Dsonar.junit.reportsPath=target/surefire-reports/ \
-        //            -Dsonar.jacoco.reportsPath=target/jacoco.exec \
-        //            -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml'''
-        //       }
-        //     }
-        // }
-
-        stage('SonarCloud Analysis') {
+        stage('Sonar Analysis') {
             steps {
-                script {
-                    def scannerArgs = [
-                        "sonar-scanner",
-                        "-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD",
-                        "-Dsonar.organization=uditsharma1632", 
-                        "-Dsonar.host.url=https://sonarcloud.io",
-                        "-Dsonar.login=9cd96b71bd8aef2e1ad3abb87fb3003685ff74ec", 
-                        "-Dsonar.projectName=vprSpringBootReactiveCRUDofile",
-                        "-Dsonar.sources=src/",
-                        "-Dsonar.java.binaries=target/classes/com/reactive/springbootreactivecrud/",
-                        "-Dsonar.junit.reportsPath=target/surefire-reports/",
-                        "-Dsonar.jacoco.reportPaths=target/jacoco.exec",
-                        "-Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml"
-                    ]
-
-                    sh(script: scannerArgs.join(' '), returnStatus: true)
+               withSonarQubeEnv(installationName: 'SonarCloud') {
+                   sh '''-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD \
+                   -Dsonar.projectName=SpringBootReactiveCRUD \
+                   -Dsonar.sources=src/ \
+                   -Dsonar.java.binaries=target/classes/com/reactive/springbootreactivecrud/ \
+                   -Dsonar.junit.reportsPath=target/surefire-reports/ \
+                   -Dsonar.jacoco.reportsPath=target/jacoco.exec \
+                   -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml'''
+              }
+            }
         }
-    }
-}
+
+//         stage('SonarCloud Analysis') {
+//             steps {
+//                 script {
+//                     def scannerArgs = [
+//                         "sonar-scanner",
+//                         "-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD",
+//                         "-Dsonar.organization=uditsharma1632", 
+//                         "-Dsonar.host.url=https://sonarcloud.io",
+//                         "-Dsonar.login=9cd96b71bd8aef2e1ad3abb87fb3003685ff74ec", 
+//                         "-Dsonar.projectName=vprSpringBootReactiveCRUDofile",
+//                         "-Dsonar.sources=src/",
+//                         "-Dsonar.java.binaries=target/classes/com/reactive/springbootreactivecrud/",
+//                         "-Dsonar.junit.reportsPath=target/surefire-reports/",
+//                         "-Dsonar.jacoco.reportPaths=target/jacoco.exec",
+//                         "-Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml"
+//                     ]
+
+//                     sh(script: scannerArgs.join(' '), returnStatus: true)
+//         }
+//     }
+// }
 
 
     }
