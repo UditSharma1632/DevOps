@@ -2,7 +2,7 @@ pipeline{
     agent any
     tools{
         maven "MAVEN3"
-        jdk "OpenJDK"
+        jdk "AmazonJDK"
     }
 
     stages{
@@ -28,6 +28,12 @@ pipeline{
         stage('Unit Test'){
             steps{
                 sh 'mvn test'
+            }
+        }
+
+        stage('Checkstyle Analysis'){
+            steps {
+                sh 'mvn checkstyle:checkstyle'
             }
         }
 
