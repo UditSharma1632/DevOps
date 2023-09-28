@@ -1,12 +1,12 @@
 pipeline{
     agent any
 
-    environment {
-        SONAR_TOKEN = credentials('YOUR_SONAR_TOKEN_ID')
-        SONAR_PROJECT_KEY = 'your-project-key'
-        SONAR_ORGANIZATION = 'your-organization-key'
-        SONAR_HOST_URL = 'https://sonarqube.example.com' // Update with your SonarQube server URL
-    }
+    // environment {
+    //     SONAR_TOKEN = credentials('YOUR_SONAR_TOKEN_ID')
+    //     SONAR_PROJECT_KEY = 'your-project-key'
+    //     SONAR_ORGANIZATION = 'your-organization-key'
+    //     SONAR_HOST_URL = 'https://sonarqube.example.com' // Update with your SonarQube server URL
+    // }
 
     tools{
         maven "MAVEN3"
