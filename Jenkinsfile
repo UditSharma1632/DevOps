@@ -47,8 +47,8 @@ pipeline{
                 script {
                     def scannerArgs = [
                         "mvn", "sonar:sonar",
-                        "-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD"
-                        "-Dsonar.organization=uditsharma1632"
+                        "-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD",
+                        "-Dsonar.organization=uditsharma1632",
                         "-Dsonar.host.url=https://sonarcloud.io",
                         "-Dsonar.login=\$SONAR_TOKEN"
                     ]
