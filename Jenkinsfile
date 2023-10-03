@@ -1,13 +1,10 @@
 pipeline{
     agent any
 
-    // environment {
-    //     SONAR_TOKEN = credentials('YOUR_SONAR_TOKEN_ID')
-    //     SONAR_PROJECT_KEY = 'your-project-key'
-    //     SONAR_ORGANIZATION = 'your-organization-key'
-    //     SONAR_HOST_URL = 'https://sonarqube.example.com' // Update with your SonarQube server URL
-    // }
-
+    environment {
+        SONAR_TOKEN = credentials('Sonar-Cloud-Token') 
+    }
+    
     tools{
         maven "MAVEN3"
         jdk "AmazonJDK"
@@ -45,42 +42,20 @@ pipeline{
             }
         }
 
-        stage('Sonar Analysis') {
+        stage('SonarCloud Analysis') {
             steps {
-               withSonarQubeEnv(installationName: 'SonarCloud') {
-                   sh '''-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD \
-                   -Dsonar.projectName=SpringBootReactiveCRUD \
-                   -Dsonar.sources=src/ \
-                   -Dsonar.java.binaries=target/classes/com/reactive/springbootreactivecrud/ \
-                   -Dsonar.junit.reportsPath=target/surefire-reports/ \
-                   -Dsonar.jacoco.reportsPath=target/jacoco.exec \
-                   -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml'''
-              }
+                script {
+                    def scannerArgs = [
+                        "mvn", "sonar:sonar",
+                        "-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD"
+                        "-Dsonar.organization=uditsharma1632"
+                        "-Dsonar.host.url=https://sonarcloud.io",
+                        "-Dsonar.login=\$SONAR_TOKEN"
+                    ]
+                    sh script: scannerArgs.join(' '), returnStatus: true
+                }
             }
         }
-
-//         stage('SonarCloud Analysis') {
-//             steps {
-//                 script {
-//                     def scannerArgs = [
-//                         "sonar-scanner",
-//                         "-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD",
-//                         "-Dsonar.organization=uditsharma1632", 
-//                         "-Dsonar.host.url=https://sonarcloud.io",
-//                         "-Dsonar.login=9cd96b71bd8aef2e1ad3abb87fb3003685ff74ec", 
-//                         "-Dsonar.projectName=vprSpringBootReactiveCRUDofile",
-//                         "-Dsonar.sources=src/",
-//                         "-Dsonar.java.binaries=target/classes/com/reactive/springbootreactivecrud/",
-//                         "-Dsonar.junit.reportsPath=target/surefire-reports/",
-//                         "-Dsonar.jacoco.reportPaths=target/jacoco.exec",
-//                         "-Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml"
-//                     ]
-
-//                     sh(script: scannerArgs.join(' '), returnStatus: true)
-//         }
-//     }
-// }
-
 
     }
 
