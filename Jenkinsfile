@@ -45,6 +45,7 @@ pipeline{
         stage('SonarCloud Analysis') {
             steps {
                 script {
+                    withSonarQubeEnv('SonarCloud'){
                     def scannerArgs = [
                         "mvn", "sonar:sonar",
                         "-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD",
@@ -53,6 +54,7 @@ pipeline{
                         "-Dsonar.login=\$SONAR_TOKEN"
                     ]
                     sh script: scannerArgs.join(' '), returnStatus: true
+                    }
                 }
             }
         }
