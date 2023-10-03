@@ -2,7 +2,15 @@ pipeline{
     agent any
 
     environment {
-        SONAR_TOKEN = credentials('Sonar-Cloud-Token') 
+        SONAR_TOKEN = credentials('Sonar-Cloud-Token')
+        projectName = "SpringBootReactive"
+        // NEXUS_VERSION = "nexus3"
+        // NEXUS_PROTOCOL = "http"
+        // NEXUS_URL = "172.31.12.215:8081"
+        // NEXUS_REPOSITORY = "vprofile-release"
+	    // NEXUS_REPO_ID    = "vprofile-release"
+        // NEXUS_CREDENTIAL_ID = "nexuslogin"
+        // ARTVERSION = "${env.BUILD_ID}"
     }
     
     tools{
@@ -71,6 +79,26 @@ pipeline{
                 }
             }
         }
+
+        stage('Upload Artifact'){
+            steps{
+                    nexusArtifactUploader(
+                        nexusVersion: 'nexus3',
+                        protocol: 'http',
+                        nexusUrl: '172.31.12.215:8081',
+                        groupId: 'com.reactive',
+                        version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+                        repository: 'spring-boot-reactive',
+                        credentialsId: 'Nexus-Creds',
+                        artifacts: [
+                            [artifactId: '${projectName}',
+                            classifier: '',
+                            file: '/target/*.jar',
+                            type: 'jar']
+                        ]
+                    )
+                }
+            }
 
     }
 }
