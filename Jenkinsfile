@@ -93,7 +93,7 @@ pipeline{
                         artifacts: [
                             [artifactId: '${projectName}',
                             classifier: '',
-                            file: '/target/SpringBootReactiveCRUD-0.0.1-SNAPSHOT.jar',
+                            file: '**/*.jar',
                             type: 'jar']
                         ]
                     )
