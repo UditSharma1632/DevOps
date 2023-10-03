@@ -13,7 +13,7 @@ pipeline{
     stages{
         stage('Checkout Source Code'){
             steps{
-                git branch: 'master', url: 'https://github.com/UditSharma1632/SpringBootReactiveCRUD.git'
+                git branch: 'develop', url: 'https://github.com/UditSharma1632/SpringBootReactiveCRUD.git'
             }
         }
 
