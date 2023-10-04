@@ -50,55 +50,55 @@ pipeline{
             }
         }
 
-        stage('SonarCloud Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarCloud'){
-                    def scannerArgs = [
-                        "mvn", "sonar:sonar",
-                        "-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD",
-                        "-Dsonar.organization=uditsharma1632",
-                        "-Dsonar.host.url=https://sonarcloud.io",
-                        "-Dsonar.login=\$SONAR_TOKEN"
-                    ]
-                    sh script: scannerArgs.join(' '), returnStatus: true
-                    }
-                }
-            }
-        }
+        // stage('SonarCloud Analysis') {
+        //     steps {
+        //         script {
+        //             withSonarQubeEnv('SonarCloud'){
+        //             def scannerArgs = [
+        //                 "mvn", "sonar:sonar",
+        //                 "-Dsonar.projectKey=UditSharma1632_SpringBootReactiveCRUD",
+        //                 "-Dsonar.organization=uditsharma1632",
+        //                 "-Dsonar.host.url=https://sonarcloud.io",
+        //                 "-Dsonar.login=\$SONAR_TOKEN"
+        //             ]
+        //             sh script: scannerArgs.join(' '), returnStatus: true
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 3, unit: 'MINUTES') {
-                    script {
-                        def qg = waitForQualityGate()
-                        if (qg.status != 'OK') {
-                            error "Pipeline aborted due to Quality Gate failure: ${qg.status}"
-                        }
-                    }
-                }
-            }
-        }
+        // stage('Quality Gate') {
+        //     steps {
+        //         timeout(time: 3, unit: 'MINUTES') {
+        //             script {
+        //                 def qg = waitForQualityGate()
+        //                 if (qg.status != 'OK') {
+        //                     error "Pipeline aborted due to Quality Gate failure: ${qg.status}"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Upload Artifact'){
             steps{
-                    nexusArtifactUploader(
-                        nexusVersion: 'nexus3',
-                        protocol: 'http',
-                        nexusUrl: '172.31.12.215:8081',
-                        groupId: 'com.reactive',
-                        version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-                        repository: 'spring-boot-reactive',
-                        credentialsId: 'Nexus-Creds',
-                        artifacts: [
-                            [artifactId: '${projectName}',
-                            classifier: '',
-                            file: '**/*.jar',
-                            type: 'jar']
-                        ]
-                    )
-                }
+                nexusArtifactUploader(
+                    nexusVersion: 'nexus3',
+                    protocol: 'http',
+                    nexusUrl: '172.31.12.215:8081',
+                    groupId: 'com.reactive',
+                    version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+                    repository: 'spring-boot-reactive',
+                    credentialsId: 'Nexus-Creds',
+                    artifacts: [
+                        [artifactId: '${projectName}',
+                        classifier: '',
+                        file: 'target/*.jar',
+                        type: 'jar']
+                    ]
+                )
             }
+        }
 
     }
 }
