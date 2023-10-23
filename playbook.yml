@@ -1,0 +1,33 @@
+---
+- name: Deploy Jar file on webserver
+  hosts: webserver
+  become: yes
+  vars:
+    - projectName: "SpringBootReactive"
+    - app_name: springBootReactive
+  tasks:
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: /opt/app
+        state: directory
+
+    - name: Download an artifact from a private repository requiring authentication
+      community.general.maven_artifact:
+        group_id: com.reactive
+        artifact_id: "${projectName}"
+        baseVersion: SpringBootReactive-29-SNAPSHOT
+        version: SpringBootReactive-29-20231004.093601-1
+        repository_url: 'http://3.7.45.55:8081/#browse/browse:spring-boot-reactive'
+        username: admin
+        password: admin
+        dest: /opt/app
+
+    - name: create service file
+      template:
+        src: jarFile.j2
+        dest: /etc/systemd/system/springBoot-latest.service
+
+    - name: start service
+      service:
+        name: springBoot-latest.service
+        state: restarted
