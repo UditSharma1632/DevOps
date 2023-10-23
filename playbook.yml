@@ -11,7 +11,7 @@
         path: /opt/app
         state: directory
 
-    - name: Download an artifact from a private repository requiring authentication
+    - name: Download artifact from nexus
       community.general.maven_artifact:
         group_id: com.reactive
         artifact_id: "${projectName}"
@@ -20,7 +20,12 @@
         repository_url: 'http://3.7.45.55:8081/#browse/browse:spring-boot-reactive'
         username: admin
         password: admin
-        dest: /opt/app
+        dest: /opt
+        when: "{{ inventory_hostname == 'master'}}"
+
+    - name: copy the artifact to remote webserver
+      copy: src=opt dest=/opt/app
+      when: "{{ inventory_hostname == 'webserver'}}"
 
     - name: create service file
       template:
