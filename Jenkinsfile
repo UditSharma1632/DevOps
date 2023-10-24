@@ -6,7 +6,7 @@ pipeline{
         projectName = "SpringBootReactive"
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "172.31.12.215:8081"
+        NEXUS_URL = "65.2.80.126:8081"
         NEXUS_REPOSITORY = "spring-boot-reactive"
         NEXUS_CREDENTIAL_ID = "Nexus-Creds"
     }
@@ -103,6 +103,7 @@ pipeline{
                 script{
                     ansiblePlaybook(
                         disableHostKeyChecking: true,
+                        colorized: true,
                         installation: 'ansible',
                         inventory: 'inventory.inv',
                         playbook: 'playbook.yml', 
