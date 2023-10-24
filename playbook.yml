@@ -1,31 +1,37 @@
 ---
-- name: Deploy Jar file on webserver
+- name: Download and Deploy Artifact
   hosts: webserver
   become: yes
+
   vars:
     - projectName: "SpringBootReactive"
     - app_name: springBootReactive
+    - nexus_repository_url: 'http://65.2.80.126:8081/repository/spring-boot-reactive'
+    - nexus_username: 'admin'
+    - nexus_password: 'admin'
+    - artifact_version:
+
   tasks:
     - name: Create a directory if it does not exist
       ansible.builtin.file:
         path: /opt/app
         state: directory
 
-    - name: Download artifact from nexus
+    - name: Download the artifact from Nexus
       community.general.maven_artifact:
         group_id: com.reactive
-        artifact_id: "${projectName}"
-        baseVersion: SpringBootReactive-29-SNAPSHOT
-        version: SpringBootReactive-29-20231004.093601-1
-        repository_url: 'http://3.7.45.55:8081/#browse/browse:spring-boot-reactive'
-        username: admin
-        password: admin
-        dest: /opt
-        when: "{{ inventory_hostname == 'master'}}"
+        artifact_id: "{{ projectName }}"
+        version: "{{ artifact_version }}"
+        repository_url: "{{ nexus_repository_url }}"
+        username: "{{ nexus_username }}"
+        password: "{{ nexus_password }}"
+        dest: /tmp/{{ app_name }}.jar
+      register: download_result
 
-    - name: copy the artifact to remote webserver
-      copy: src=opt dest=/opt/app
-      when: "{{ inventory_hostname == 'webserver'}}"
+    - name: Copy the downloaded artifact to the web server
+      ansible.builtin.copy:
+        src: /tmp/{{ app_name }}.jar
+        dest: /opt/app/{{ app_name }}.jar
 
     - name: create service file
       template:
