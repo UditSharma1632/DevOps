@@ -6,7 +6,7 @@ pipeline{
         projectName = "SpringBootReactive"
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "65.2.78.134:8081"
+        NEXUS_URL = "Nexus-LB-1617573302.ap-south-1.elb.amazonaws.com"
         NEXUS_REPOSITORY = "spring-boot-reactive"
         NEXUS_CREDENTIAL_ID = "Nexus-Creds"
     }
