@@ -98,19 +98,24 @@ pipeline{
             }
         }
 
-        stage('Deploy jar to WebServer'){
-            steps{
-                script{
-                    ansiblePlaybook(
+        stage('Deploy jar to WebServer') {
+            steps {
+                script {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'web-server-ssh', keyFileVariable: 'id_rsa')]) {
+                        ansiblePlaybook(
                         disableHostKeyChecking: true,
                         colorized: true,
                         installation: 'ansible',
                         inventory: 'inventory.inv',
-                        playbook: 'playbook.yml', 
-                    )
+                        playbook: 'playbook.yml',
+                        credentialsId: 'web-server-ssh',
+                        sshKeyVariable: 'id_rsa'
+                        )
+                    }
                 }
             }
         }
+
 
     }
 }
