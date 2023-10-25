@@ -1,6 +1,7 @@
 ---
 - name: Download and Deploy Artifact
   hosts: webserver
+  become: ec2-user
 
   vars:
     - projectName: "SpringBootReactive"
@@ -8,7 +9,8 @@
     - nexus_repository_url: 'http://nexus-lb-1617573302.ap-south-1.elb.amazonaws.com/#browse/browse:spring-boot-reactive'
     - nexus_username: 'admin'
     - nexus_password: 'admin'
-    - artifact_version:
+    - ansible_ssh_private_key_file: "{{ id_rsa }}"
+
 
   tasks:
     - name: Create a directory if it does not exist
@@ -20,7 +22,6 @@
       community.general.maven_artifact:
         group_id: com.reactive
         artifact_id: "{{ projectName }}"
-        version: "{{ artifact_version }}"
         repository_url: "{{ nexus_repository_url }}"
         username: "{{ nexus_username }}"
         password: "{{ nexus_password }}"
