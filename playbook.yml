@@ -1,7 +1,6 @@
 ---
 - name: Download and Deploy Artifact
   hosts: webserver
-  become: ec2-user
 
   vars:
     - projectName: "SpringBootReactive"
