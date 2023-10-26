@@ -1,5 +1,2 @@
-[master]
-3.111.41.130
-
 [webserver]
-WebServer-LB-156977924.ap-south-1.elb.amazonaws.com
+172.31.43.231
