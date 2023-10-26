@@ -11,20 +11,19 @@
     - nexus_password: 'admin'
 
   tasks:
-    - name: Create a directory if it does not exist
-      ansible.builtin.file:
+    - name: create app directory if does not exist
+      file:
         path: /opt/app
         state: directory
 
     - name: Download the artifact from Nexus
-      community.general.maven_artifact:
+      maven_artifact:
         group_id: com.reactive
         artifact_id: "{{ projectName }}"
         repository_url: "{{ nexus_repository_url }}"
         username: "{{ nexus_username }}"
         password: "{{ nexus_password }}"
         dest: /opt/app/{{ app_name }}.jar
-        ansible_python_interpreter: /usr/bin/python3
 
     - name: create service file
       template:
