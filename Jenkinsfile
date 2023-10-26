@@ -6,7 +6,6 @@ pipeline{
         projectName = "SpringBootReactive"
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
-        NEXUS_ARTIFACT_VERSION_PREFIX = "1.33."
         NEXUS_URL = "Nexus-LB-1617573302.ap-south-1.elb.amazonaws.com"
         NEXUS_REPOSITORY = "spring-boot-reactive"
         NEXUS_CREDENTIAL_ID = "Nexus-Creds"
@@ -86,7 +85,7 @@ pipeline{
                 protocol: env.NEXUS_PROTOCOL,
                 nexusUrl: env.NEXUS_URL,
                 groupId: 'com.reactive',
-                version: env.NEXUS_ARTIFACT_VERSION_PREFIX + env.BUILD_ID,
+                version: env.BUILD_ID,
                 repository: env.NEXUS_REPOSITORY,
                 credentialsId: env.NEXUS_CREDENTIAL_ID,
                 artifacts: [
