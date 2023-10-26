@@ -24,6 +24,7 @@
         username: "{{ nexus_username }}"
         password: "{{ nexus_password }}"
         dest: /opt/app/{{ app_name }}.jar
+        ansible_python_interpreter: /usr/bin/python3
 
     - name: create service file
       template:
