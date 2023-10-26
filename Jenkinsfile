@@ -26,7 +26,14 @@ pipeline{
 
         stage('Build'){
             steps{
-                sh 'mvn clean package'
+                sh 'mvn install -Dskiptests'
+            }
+
+            post{
+                success {
+                    echo 'Archiving artifacts now'
+                    archiveArtifacts artifacts: '**/*.jar'
+                }
             }
         }
 
