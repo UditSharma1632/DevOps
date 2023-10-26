@@ -2,10 +2,11 @@ pipeline{
     agent any
 
     environment {
-       SONAR_TOKEN = credentials('Sonar-Cloud-Token')
+        SONAR_TOKEN = credentials('Sonar-Cloud-Token')
         projectName = "SpringBootReactive"
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
+        NEXUS_ARTIFACT_VERSION_PREFIX = "1.33."
         NEXUS_URL = "Nexus-LB-1617573302.ap-south-1.elb.amazonaws.com"
         NEXUS_REPOSITORY = "spring-boot-reactive"
         NEXUS_CREDENTIAL_ID = "Nexus-Creds"
@@ -81,41 +82,36 @@ pipeline{
         stage('Upload Artifact'){
             steps{
                 nexusArtifactUploader(
-                    nexusVersion: env.NEXUS_VERSION,
-                    protocol: env.NEXUS_PROTOCOL,
-                    nexusUrl: env.NEXUS_URL,
-                    groupId: 'com.reactive',
-                    version: "${projectName}-${env.BUILD_ID}-SNAPSHOT",
-                    repository: env.NEXUS_REPOSITORY,
-                    credentialsId: env.NEXUS_CREDENTIAL_ID,
-                    artifacts: [
-                        [artifactId: "${projectName}",
-                        classifier: '',
-                        file: 'target/SpringBootReactiveCRUD-0.0.1-SNAPSHOT.jar',
-                        type: 'jar']
+                nexusVersion: env.NEXUS_VERSION,
+                protocol: env.NEXUS_PROTOCOL,
+                nexusUrl: env.NEXUS_URL,
+                groupId: 'com.reactive',
+                version: env.NEXUS_ARTIFACT_VERSION_PREFIX + env.BUILD_ID,
+                repository: env.NEXUS_REPOSITORY,
+                credentialsId: env.NEXUS_CREDENTIAL_ID,
+                artifacts: [
+                    [artifactId: "${projectName}",
+                    classifier: '',
+                    file: 'target/SpringBootReactiveCRUD-0.0.1-SNAPSHOT.jar',
+                    type: 'jar']
                     ]
                 )
+                
             }
         }
 
         stage('Deploy jar to WebServer') {
             steps {
-                script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'web-server-ssh', keyFileVariable: 'id_rsa')]) {
-                        ansiblePlaybook(
-                        disableHostKeyChecking: true,
-                        colorized: true,
-                        installation: 'ansible',
-                        inventory: 'inventory.inv',
-                        playbook: 'playbook.yml',
-                        credentialsId: 'web-server-ssh',
-                        sshKeyVariable: 'id_rsa'
-                        )
-                    }
-                }
+                ansiblePlaybook(
+                credentialsId: 'web-server-ssh',
+                disableHostKeyChecking: true,
+                colorized: true,
+                installation: 'ansible',
+                inventory: 'inventory.inv',
+                playbook: 'playbook.yml',
+               )
             }
         }
-
 
     }
 }
