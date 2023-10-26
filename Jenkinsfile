@@ -85,7 +85,7 @@ pipeline{
                 protocol: env.NEXUS_PROTOCOL,
                 nexusUrl: env.NEXUS_URL,
                 groupId: 'com.reactive',
-                version: env.BUILD_ID-SNAPSHOT,
+                version: ${projectName}-${env.BUILD_ID}-SNAPSHOT,
                 repository: env.NEXUS_REPOSITORY,
                 credentialsId: env.NEXUS_CREDENTIAL_ID,
                 artifacts: [
