@@ -9,6 +9,7 @@ pipeline{
         NEXUS_URL = "Nexus-LB-1617573302.ap-south-1.elb.amazonaws.com"
         NEXUS_REPOSITORY = "spring-boot-reactive"
         NEXUS_CREDENTIAL_ID = "Nexus-Creds"
+        VERSION = readMavenPom().getVersion()
     }
     
     tools{
@@ -85,7 +86,7 @@ pipeline{
                 protocol: env.NEXUS_PROTOCOL,
                 nexusUrl: env.NEXUS_URL,
                 groupId: 'com.reactive',
-                version: "${projectName}-${env.BUILD_ID}-SNAPSHOT",
+                version: "${VERSION}" + 'SNAPSHOT',
                 repository: env.NEXUS_REPOSITORY,
                 credentialsId: env.NEXUS_CREDENTIAL_ID,
                 artifacts: [
