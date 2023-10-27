@@ -1,12 +1,11 @@
 ---
 - name: Download and Deploy Artifact
   hosts: webserver
-  become: yes
 
   vars:
     - projectName: "SpringBootReactive"
     - app_name: springBootReactive
-    - nexus_repository_url: 'http://nexus-lb-1617573302.ap-south-1.elb.amazonaws.com/#browse/browse:spring-boot-reactive'
+    - nexus_repository_url: 'http://nexus-lb-1617573302.ap-south-1.elb.amazonaws.com/repository/spring-boot-reactive/'
     - nexus_username: 'admin'
     - nexus_password: 'admin'
 
