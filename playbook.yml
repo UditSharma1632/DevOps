@@ -31,7 +31,16 @@
         src: jarFile.j2
         dest: /etc/systemd/system/springBoot-latest.service
 
-    - name: start service
-      service:
-        name: springBoot-latest.service
-        state: restarted
+    - name: Reload systemd manager
+      ansible.builtin.systemd:
+          daemon_reload: yes
+
+    - name: Enable the service
+      ansible.builtin.service:
+        name: springBoot-latest
+        enabled: yes
+
+    - name: Start the service
+      ansible.builtin.service:
+        name: springBoot-latest
+        state: started
