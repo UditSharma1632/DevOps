@@ -5,7 +5,7 @@
   vars:
     - projectName: "SpringBootReactive"
     - app_name: springBootReactive
-    - nexus_repository_url: 'http://nexus-lb-1617573302.ap-south-1.elb.amazonaws.com/repository/spring-boot-reactive/'
+    - nexus_repository_url: 'http://13.127.31.205:8081/repository/spring-boot-reactive/'
     - nexus_username: 'admin'
     - nexus_password: 'admin'
 
@@ -20,6 +20,7 @@
         group_id: com.reactive
         artifact_id: "{{ projectName }}"
         repository_url: "{{ nexus_repository_url }}"
+        version: 0.0.1-SNAPSHOT
         username: "{{ nexus_username }}"
         password: "{{ nexus_password }}"
         dest: /opt/app/{{ app_name }}.jar
