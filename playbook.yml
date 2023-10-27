@@ -16,6 +16,12 @@
         path: /opt/app
         state: directory
 
+    - name: Remove old JAR file
+      ansible.builtin.file:
+          path: /opt/app/{{ app_name }}.jar
+          state: absent
+      ignore_errors: yes
+
     - name: Download the artifact from Nexus
       maven_artifact:
         group_id: com.reactive
@@ -43,4 +49,4 @@
     - name: Start the service
       ansible.builtin.service:
         name: springBoot-latest
-        state: started
+        state: restarted
