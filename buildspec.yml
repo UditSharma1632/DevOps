@@ -13,4 +13,4 @@ phases:
       - echo "Build completed successfully!"
 artifacts:
   files:
-    - target/SpringBootReactiveCRUD-0.0.1-SNAPSHOT.jar
+    - '**/*.jar'
