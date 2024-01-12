@@ -14,7 +14,7 @@ phases:
       - echo "cleaning and packaging"
       - mvn clean install -DskipTests
       - echo "Building Docker image"
-      - docker build -t my-crud-app:latest .
+      - docker build -t my-crud-app .
   post_build:
     commands:
       - echo "Logging in to Docker"
