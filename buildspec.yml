@@ -1,16 +1,26 @@
 version: 0.2
 
+env:
+  parameter-store:
+    DOCKER_REGISTRY_USERNAME: /crudapp/docker-credentials/username
+    DOCKER_REGISTRY_PASSWORD: /crudapp/docker-credentials/password
+
 phases:
   install:
     runtime-versions:
       java: corretto17
   build:
     commands:
-      - echo "Building and packaging"
-      - mvn install -DskipTests
+      - echo "cleaning and packaging"
+      - mvn clean install -DskipTests
+      - echo "Building Docker image"
+      - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin"
+      - docker build -t "$DOCKER_REGISTRY_USERNAME/my-crud-image:latest" .
+      - docker push "$DOCKER_REGISTRY_USERNAME/my-crud-image:latest"
   post_build:
     commands:
       - echo "Build completed successfully!"
 artifacts:
   files:
     - '**/*.jar'
+  base-directory: /target
