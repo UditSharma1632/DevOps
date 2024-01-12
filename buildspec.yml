@@ -14,15 +14,15 @@ phases:
       - echo "cleaning and packaging"
       - mvn clean install -DskipTests
       - echo "Building Docker image"
-      - docker build -t my-crud-app .
+      - docker build -t crud-app .
   post_build:
     commands:
       - echo "Logging in to Docker"
       - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
       - echo "Tagging Docker image for Docker Hub"
-      - docker tag my-crud-app:latest "$DOCKERHUB_USERNAME/my-crud-image:latest"
+      - docker tag crud-app:latest $DOCKERHUB_USERNAME/my-crud-image:latest
       - echo "pushing to dockerhub"
-      - docker push "$DOCKER_REGISTRY_USERNAME/my-crud-image:latest"
+      - docker push $DOCKER_REGISTRY_USERNAME/my-crud-image:latest
 
 artifacts:
   files:
