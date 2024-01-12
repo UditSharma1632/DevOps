@@ -14,12 +14,16 @@ phases:
       - echo "cleaning and packaging"
       - mvn clean install -DskipTests
       - echo "Building Docker image"
-      - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin"
-      - docker build -t "$DOCKER_REGISTRY_USERNAME/my-crud-image:latest" .
-      - docker push "$DOCKER_REGISTRY_USERNAME/my-crud-image:latest"
+      - docker build -t my-crud-app:latest .
   post_build:
     commands:
-      - echo "Build completed successfully!"
+      - echo "Logging in to Docker"
+      - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
+      - echo "Tagging Docker image for Docker Hub"
+      - docker tag my-crud-app:latest "$DOCKERHUB_USERNAME/my-crud-image:latest"
+      - echo "pushing to dockerhub"
+      - docker push "$DOCKER_REGISTRY_USERNAME/my-crud-image:latest"
+
 artifacts:
   files:
     - '**/*.jar'
