@@ -1,0 +1,1 @@
+docker pull uditsharma1632/my-crud-image:latest
