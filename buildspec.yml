@@ -9,6 +9,12 @@ phases:
   install:
     runtime-versions:
       java: corretto17
+
+  pre_build:
+    commands:
+      - apt-get update -y
+      - apt-get install -y maven
+
   build:
     commands:
       - echo "cleaning and packaging"
