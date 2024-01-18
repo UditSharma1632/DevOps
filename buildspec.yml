@@ -32,4 +32,3 @@ phases:
 artifacts:
   files:
     - '**/*.jar'
-  base-directory: /target
