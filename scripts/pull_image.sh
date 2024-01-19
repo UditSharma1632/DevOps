@@ -1,1 +1,1 @@
-docker pull uditsharma1632/my-crud-image:latest
+sudo docker pull uditsharma1632/my-crud-image:latest
